@@ -11,6 +11,8 @@ from app.database.database import (
 
 from app.auth.auth_service import create_admin_user
 
+from app.routers.health import router as health_router
+
 app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
@@ -29,6 +31,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(health_router)
 
 @app.get("/")
 def root():
