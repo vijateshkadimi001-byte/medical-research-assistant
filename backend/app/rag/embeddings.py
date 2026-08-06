@@ -1,14 +1,15 @@
+print("EMBEDDINGS: 1 - Starting imports")
+
 from functools import lru_cache
+print("EMBEDDINGS: 2 - lru_cache imported")
 
 from langchain_huggingface import HuggingFaceEmbeddings
+print("EMBEDDINGS: 3 - HuggingFaceEmbeddings imported")
 
 
 @lru_cache(maxsize=1)
 def get_embedding_model():
-    """
-    Returns a singleton local embedding model.
-    Runs completely offline after the first download.
-    """
+    print("EMBEDDINGS: get_embedding_model() called")
 
     return HuggingFaceEmbeddings(
         model_name="sentence-transformers/all-MiniLM-L6-v2",

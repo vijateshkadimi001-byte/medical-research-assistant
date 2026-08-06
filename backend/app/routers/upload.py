@@ -2,26 +2,44 @@ from pathlib import Path
 import shutil
 import traceback
 
+print("UPLOAD: 1 - Standard libraries imported")
+
 from fastapi import Depends
+print("UPLOAD: 2 - fastapi Depends imported")
+
 from app.auth.dependencies import get_current_user
+print("UPLOAD: 3 - auth dependencies imported")
+
 from app.database.models import User
+print("UPLOAD: 4 - User model imported")
 
 from app.services.memory_service import get_state, clear_state
+print("UPLOAD: 5 - memory_service imported")
 
 from fastapi import APIRouter, File, HTTPException, UploadFile
+print("UPLOAD: 6 - FastAPI router imported")
 
 from app.config import settings
+print("UPLOAD: 7 - settings imported")
+
 from app.rag.pipeline import build_rag_pipeline
-from app.services.memory_service import get_state
+print("UPLOAD: 8 - build_rag_pipeline imported")
+
 from app.models.schemas import UploadResponse
+print("UPLOAD: 9 - UploadResponse imported")
 
 router = APIRouter(
     prefix="/upload",
     tags=["Upload"],
 )
 
+print("UPLOAD: 10 - Router created")
+
 UPLOAD_DIR = Path(settings.UPLOAD_FOLDER)
+print("UPLOAD: 11 - Upload path created")
+
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+print("UPLOAD: 12 - Upload directory ensured")
 
 
 @router.post("", response_model=UploadResponse)
