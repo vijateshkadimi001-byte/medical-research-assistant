@@ -23,14 +23,19 @@ app = FastAPI(
     description="AI Medical Research Assistant",
 )
 
-Base.metadata.create_all(bind=engine)
+print(">>> Starting app")
 
+Base.metadata.create_all(bind=engine)
+print(">>> Database created")
 
 db = SessionLocal()
+print(">>> Database session opened")
 
 create_admin_user(db)
+print(">>> Admin user checked")
 
 db.close()
+print(">>> Database session closed")
 
 app.add_middleware(
     CORSMiddleware,
