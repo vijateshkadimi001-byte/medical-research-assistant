@@ -22,7 +22,7 @@ print("UPLOAD: 6 - FastAPI router imported")
 from app.config import settings
 print("UPLOAD: 7 - settings imported")
 
-from app.rag.pipeline import build_rag_pipeline
+#from app.rag.pipeline import build_rag_pipeline
 print("UPLOAD: 8 - build_rag_pipeline imported")
 
 from app.models.schemas import UploadResponse
@@ -65,8 +65,7 @@ async def upload_pdf(
             shutil.copyfileobj(file.file, buffer)
 
         # Build RAG
-        pipeline = build_rag_pipeline(str(pdf_path))
-
+        pipeline = None
         # Store application state
         state = get_state(current_user.id)
         state.retriever = pipeline.retriever
