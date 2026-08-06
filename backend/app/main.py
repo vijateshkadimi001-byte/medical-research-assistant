@@ -66,7 +66,7 @@ print("18. Middleware added")
 app.include_router(health_router)
 print("19. Health router added")
 
-#app.include_router(upload_router)
+app.include_router(upload_router)
 print("20. Upload router added")
 
 app.include_router(chat_router)
