@@ -65,7 +65,7 @@ async def upload_pdf(
             shutil.copyfileobj(file.file, buffer)
 
         # Build RAG
-        pipeline = None
+        pipeline = build_rag_pipeline(str(pdf_path))
         # Store application state
         state = get_state(current_user.id)
         state.retriever = pipeline.retriever
