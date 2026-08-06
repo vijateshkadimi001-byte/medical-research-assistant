@@ -1,60 +1,96 @@
-import { HeartPulse, LogOut, UserCircle2 } from "lucide-react";
+import {
+  HeartPulse,
+  LogOut,
+  UserCircle2,
+  ShieldCheck,
+} from "lucide-react";
+
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Header() {
   const navigate = useNavigate();
-
-  const username = localStorage.getItem("username") || "Admin";
+  const { logout, user } = useAuth();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("username");
-    navigate("/login");
+    logout();
+    navigate("/");
   };
 
   return (
-    <header className="flex items-center justify-between border-b border-slate-200 bg-white px-8 py-5 shadow-sm">
-      {/* Left Section */}
-      <div className="flex items-center gap-4">
-        <div className="rounded-xl bg-blue-600 p-3 text-white shadow-md">
-          <HeartPulse size={26} />
-        </div>
+    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur">
 
-        <div>
-          <h1 className="text-2xl font-bold text-slate-800">
-            MedIntel
-          </h1>
+      <div className="mx-auto flex h-20 max-w-[1700px] items-center justify-between px-8">
 
-          <p className="text-sm text-slate-500">
-            AI Medical Research Assistant
-          </p>
-        </div>
-      </div>
+        {/* Logo */}
 
-      {/* Right Section */}
-      <div className="flex items-center gap-5">
-        <div className="flex items-center gap-3 rounded-xl bg-slate-100 px-4 py-2">
-          <UserCircle2 className="text-blue-600" size={24} />
+        <div className="flex items-center gap-4">
+
+          <div className="rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-500 p-3 text-white shadow-lg">
+
+            <HeartPulse size={28} />
+
+          </div>
 
           <div>
-            <p className="text-xs text-slate-500">
-              Welcome back
-            </p>
 
-            <p className="font-semibold text-slate-800">
-              {username}
-            </p>
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+              MedIntel
+            </h1>
+
+            <div className="mt-1 flex items-center gap-2">
+
+              <ShieldCheck
+                size={14}
+                className="text-emerald-500"
+              />
+
+              <span className="text-sm text-slate-500">
+                AI Medical Research Assistant
+              </span>
+
+            </div>
+
           </div>
+
         </div>
 
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-2 rounded-lg bg-red-500 px-4 py-2 font-medium text-white transition hover:bg-red-600"
-        >
-          <LogOut size={18} />
-          Logout
-        </button>
+        {/* Right */}
+
+        <div className="flex items-center gap-4">
+
+          <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2">
+
+            <UserCircle2
+              size={32}
+              className="text-blue-600"
+            />
+
+            <div>
+
+              <p className="text-xs text-slate-500">
+                Logged in as
+              </p>
+
+              <p className="font-semibold text-slate-800">
+                {user?.username || "Admin"}
+              </p>
+
+            </div>
+
+          </div>
+
+          <button
+            onClick={handleLogout}
+            className="rounded-xl bg-red-500 px-5 py-3 font-medium text-white transition-all hover:bg-red-600 hover:shadow-lg"
+          >
+            Logout
+          </button>
+
+        </div>
+
       </div>
+
     </header>
   );
 }

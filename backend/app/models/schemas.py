@@ -4,6 +4,7 @@ from typing import Any
 
 class ChatRequest(BaseModel):
     question: str
+    conversation_id: int
 
 class Source(BaseModel):
     page: int | str
@@ -25,3 +26,8 @@ class UploadResponse(BaseModel):
     message: str
     filename: str
     chunks: int
+
+
+class RegisterRequest(BaseModel):
+    username: str
+    password: str

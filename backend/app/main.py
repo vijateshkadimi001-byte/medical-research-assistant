@@ -13,6 +13,10 @@ from app.routers.chat import router as chat_router
 
 from app.config import settings
 
+from app.routers.conversations import (
+    router as conversation_router
+)
+
 app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
@@ -40,6 +44,7 @@ app.include_router(health_router)
 app.include_router(upload_router)
 app.include_router(chat_router)
 app.include_router(auth_router)
+app.include_router(conversation_router)
 
 @app.get("/")
 def root():

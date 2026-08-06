@@ -6,11 +6,13 @@ from fastapi import Depends
 from app.auth.dependencies import get_current_user
 from app.database.models import User
 
+from app.services.memory_service import get_state, clear_state
+
 from fastapi import APIRouter, File, HTTPException, UploadFile
 
 from app.config import settings
 from app.rag.pipeline import build_rag_pipeline
-from app.services.memory_service import state
+from app.services.memory_service import get_state
 from app.models.schemas import UploadResponse
 
 router = APIRouter(
@@ -48,6 +50,7 @@ async def upload_pdf(
         pipeline = build_rag_pipeline(str(pdf_path))
 
         # Store application state
+        state = get_state(current_user.id)
         state.retriever = pipeline.retriever
         state.vectorstore = pipeline.vectorstore
         state.uploaded_file = file.filename
@@ -67,3 +70,22 @@ async def upload_pdf(
             status_code=500,
             detail=str(e)
         )
+
+@router.delete("")
+async def delete_uploaded_pdf(
+    current_user: User = Depends(get_current_user)
+):
+    state = get_state(current_user.id)
+
+    if not state.ready:
+        raise HTTPException(
+            status_code=404,
+            detail="No uploaded document found."
+        )
+
+    clear_state(current_user.id)
+
+    return {
+        "success": True,
+        "message": "Document removed successfully."
+    }

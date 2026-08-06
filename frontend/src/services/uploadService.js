@@ -12,3 +12,8 @@ export async function uploadPDF(file) {
 
   return response.data;
 }
+
+export async function deletePDF() {
+  const response = await api.delete("/upload");
+  return response.data;
+}

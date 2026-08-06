@@ -1,12 +1,23 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
+from sqlalchemy.orm import Session
 
-from fastapi import Depends
-from app.auth.dependencies import get_current_user
+from app.database.database import get_db
 from app.database.models import User
 
-from app.models.schemas import ChatRequest, ChatResponse, Source
-from app.services.memory_service import state
+from app.auth.dependencies import get_current_user
+
+from app.models.schemas import (
+    ChatRequest,
+    ChatResponse,
+    Source,
+)
+
+from app.services.memory_service import get_state
 from app.services.llm_service import generate_answer
+
+from app.services.message_service import save_message
+from app.services.conversation_service import get_conversation
+
 
 router = APIRouter(
     prefix="/chat",
@@ -17,22 +28,74 @@ router = APIRouter(
 @router.post("", response_model=ChatResponse)
 async def chat(
     request: ChatRequest,
-    current_user: User = Depends(get_current_user)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
 
-    # Check if a PDF has been uploaded
-    if not state.ready or state.retriever is None:
+    # Verify conversation belongs to current user
+    conversation = get_conversation(
+        db=db,
+        conversation_id=request.conversation_id,
+        user_id=current_user.id,
+    )
+
+    if conversation is None:
         raise HTTPException(
-            status_code=400,
-            detail="Please upload a medical PDF before asking questions."
+            status_code=404,
+            detail="Conversation not found."
         )
+    
+    state = get_state(current_user.id)
+
+    # Save user message
+    save_message(
+        db=db,
+        conversation_id=request.conversation_id,
+        role="user",
+        content=request.question,
+    )
 
     try:
-        # Retrieve relevant document chunks
-        documents = state.retriever.invoke(request.question)
 
-        # Build context for Gemini
-        context = "\n\n".join(doc.page_content for doc in documents)
+        documents = []
+        context = ""
+        sources = []
+
+        # Use RAG only if a PDF has been uploaded
+        if state.ready and state.retriever is not None:
+
+            documents = state.retriever.invoke(
+                request.question
+            )
+
+            context = "\n\n".join(
+                doc.page_content
+                for doc in documents
+            )
+
+            for doc in documents:
+
+                page = doc.metadata.get(
+                    "page",
+                    "Unknown"
+                )
+
+                preview = (
+                    doc.page_content
+                    .strip()
+                    .replace("\n", " ")
+                )
+
+                if len(preview) > 180:
+                    preview = preview[:180] + "..."
+
+                sources.append(
+                    Source(
+                        page=page,
+                        source=state.uploaded_file,
+                        preview=preview,
+                    )
+                )
 
         # Generate answer
         answer = generate_answer(
@@ -40,25 +103,14 @@ async def chat(
             question=request.question,
         )
 
-        # Create simple citations
-        
-        sources = []
-
-        for doc in documents:
-            page = doc.metadata.get("page", "Unknown")
-
-            preview = doc.page_content.strip().replace("\n", " ")
-
-            if len(preview) > 180:
-                preview = preview[:180] + "..."
-
-            sources.append(
-                Source(
-                    page=page,
-                    source=state.uploaded_file,
-                    preview=preview,
-                )
-            )
+        # Save assistant message
+        save_message(
+            db=db,
+            conversation_id=request.conversation_id,
+            role="assistant",
+            content=answer,
+            sources=[source.model_dump() for source in sources],
+        )
 
         return ChatResponse(
             answer=answer,
@@ -66,6 +118,7 @@ async def chat(
         )
 
     except Exception as e:
+
         raise HTTPException(
             status_code=500,
             detail=f"Failed to process your question: {str(e)}",
