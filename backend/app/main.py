@@ -19,6 +19,8 @@ from app.routers.conversations import (
     router as conversation_router
 )
 
+from app.routers.upload import router as upload_router
+
 app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
@@ -41,6 +43,7 @@ app.add_middleware(
 app.include_router(health_router)
 app.include_router(auth_router)
 app.include_router(conversation_router)
+app.include_router(upload_router)
 
 @app.get("/")
 def root():
