@@ -1,3 +1,4 @@
+print("Loading vector_store.py")
 print("VECTOR: 1 - Starting imports")
 
 import uuid

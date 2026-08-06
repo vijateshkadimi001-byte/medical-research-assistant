@@ -1,3 +1,4 @@
+print("Loading loader.py")
 print("LOADER: 1 - Starting imports")
 
 from pathlib import Path

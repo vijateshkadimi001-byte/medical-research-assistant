@@ -1,3 +1,4 @@
+print("Loading pipeline.py")
 print("PIPELINE: 1 - Starting imports")
 
 from dataclasses import dataclass

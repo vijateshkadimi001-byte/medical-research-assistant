@@ -1,3 +1,4 @@
+print("Loading embeddings.py")
 print("EMBEDDINGS: 1 - Starting imports")
 
 from functools import lru_cache

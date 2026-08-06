@@ -1,3 +1,4 @@
+print("Loading splitter.py")
 print("SPLITTER: 1 - Starting imports")
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
