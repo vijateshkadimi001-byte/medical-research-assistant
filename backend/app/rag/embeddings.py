@@ -1,11 +1,13 @@
-print("Loading embeddings.py")
-
 from functools import lru_cache
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
-print("EMBEDDINGS: lru_cache imported")
-
+from app.config import settings
 
 @lru_cache(maxsize=1)
 def get_embedding_model():
     print("EMBEDDINGS: get_embedding_model() called")
-    raise Exception("Reached embeddings.py")
+
+    return GoogleGenerativeAIEmbeddings(
+        model=settings.EMBEDDING_MODEL,
+        google_api_key=settings.GOOGLE_API_KEY,
+    )

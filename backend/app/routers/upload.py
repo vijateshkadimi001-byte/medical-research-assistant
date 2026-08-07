@@ -22,7 +22,7 @@ print("UPLOAD: 6 - FastAPI router imported")
 from app.config import settings
 print("UPLOAD: 7 - settings imported")
 
-#from app.rag.pipeline import build_rag_pipeline
+from app.rag.pipeline import build_rag_pipeline
 print("UPLOAD: 8 - build_rag_pipeline imported")
 
 from app.models.schemas import UploadResponse
