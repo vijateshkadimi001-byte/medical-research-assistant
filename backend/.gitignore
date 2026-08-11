@@ -1,5 +1,7 @@
 .env
-backend/.env
 venv/
 __pycache__/
-node_modules/
+*.pyc
+vectorstore/
+uploads/
+*.db
