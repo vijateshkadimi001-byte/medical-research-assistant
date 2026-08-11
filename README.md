@@ -1,5 +1,13 @@
 # MedIntel — AI Medical Research Assistant
 
+## Live Demo
+
+**Frontend:** https://medical-research-assistant-kwff1e5ts-vijateam.vercel.app
+
+**Backend API:** https://medical-research-assistant-production-6965.up.railway.app
+
+**API Documentation:** https://medical-research-assistant-production-6965.up.railway.app/docs
+
 ## 1. Project Overview
 
 **MedIntel** is an AI-powered medical research assistant designed to help users interact with medical research documents through a conversational interface.
